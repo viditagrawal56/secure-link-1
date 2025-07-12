@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
@@ -71,6 +72,9 @@ export const shortUrls = sqliteTable("short_url", {
     .references(() => user.id, { onDelete: "cascade" }),
   shortCode: text("short_code").notNull().unique(),
   originalUrl: text("original_url").notNull(),
+  isProtected: integer("is_protected", { mode: "boolean" })
+    .default(false)
+    .notNull(),
   active: integer("active", { mode: "boolean" }).default(true).notNull(),
   createdAt: integer("created_at", { mode: "timestamp" })
     .$defaultFn(() => new Date())
@@ -79,3 +83,54 @@ export const shortUrls = sqliteTable("short_url", {
     .$defaultFn(() => new Date())
     .notNull(),
 });
+
+export const protectedUrlAuthorizedEmails = sqliteTable(
+  "protected_url_authorized_emails",
+  {
+    id: text("id").primaryKey(),
+    shortUrlId: text("short_url_id")
+      .notNull()
+      .references(() => shortUrls.id, { onDelete: "cascade" }),
+    email: text("email").notNull(),
+  }
+);
+
+export const urlAccessVerification = sqliteTable("url_access_verification", {
+  id: text("id").primaryKey(),
+  shortUrlId: text("short_url_id")
+    .notNull()
+    .references(() => shortUrls.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  token: text("token").notNull().unique(),
+  used: integer("used", { mode: "boolean" }).default(false).notNull(),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+// Realtions
+
+export const shortUrlsRelations = relations(shortUrls, ({ many }) => ({
+  authorizedEmails: many(protectedUrlAuthorizedEmails),
+}));
+
+export const protectedUrlAuthorizedEmailsRelations = relations(
+  protectedUrlAuthorizedEmails,
+  ({ one }) => ({
+    shortUrl: one(shortUrls, {
+      fields: [protectedUrlAuthorizedEmails.shortUrlId],
+      references: [shortUrls.id],
+    }),
+  })
+);
+
+export const urlAccessVerificationRelations = relations(
+  urlAccessVerification,
+  ({ one }) => ({
+    shortUrl: one(shortUrls, {
+      fields: [urlAccessVerification.shortUrlId],
+      references: [shortUrls.id],
+    }),
+  })
+);

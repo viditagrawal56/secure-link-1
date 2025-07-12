@@ -15,6 +15,13 @@
       "when": 1751656108031,
       "tag": "0001_nifty_talisman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1752174166653,
+      "tag": "0002_clear_betty_ross",
+      "breakpoints": true
     }
   ]
 }

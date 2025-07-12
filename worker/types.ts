@@ -8,4 +8,5 @@ export type Variables = {
 export type Bindings = {
   ASSETS: Fetcher;
   DB: D1Database;
+  RESEND_API_KEY: string;
 };

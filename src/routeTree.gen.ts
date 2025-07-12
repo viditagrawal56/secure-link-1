@@ -13,7 +13,9 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SigninRouteImport } from './routes/signin'
 import { Route as ShortenRouteImport } from './routes/shorten'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as AccessDeniedRouteImport } from './routes/access-denied'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RequestAccessShortCodeRouteImport } from './routes/request-access.$shortCode'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -35,48 +37,88 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccessDeniedRoute = AccessDeniedRouteImport.update({
+  id: '/access-denied',
+  path: '/access-denied',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RequestAccessShortCodeRoute = RequestAccessShortCodeRouteImport.update({
+  id: '/request-access/$shortCode',
+  path: '/request-access/$shortCode',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/access-denied': typeof AccessDeniedRoute
   '/profile': typeof ProfileRoute
   '/shorten': typeof ShortenRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/request-access/$shortCode': typeof RequestAccessShortCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/access-denied': typeof AccessDeniedRoute
   '/profile': typeof ProfileRoute
   '/shorten': typeof ShortenRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/request-access/$shortCode': typeof RequestAccessShortCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/access-denied': typeof AccessDeniedRoute
   '/profile': typeof ProfileRoute
   '/shorten': typeof ShortenRoute
   '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
+  '/request-access/$shortCode': typeof RequestAccessShortCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/profile' | '/shorten' | '/signin' | '/signup'
+  fullPaths:
+    | '/'
+    | '/access-denied'
+    | '/profile'
+    | '/shorten'
+    | '/signin'
+    | '/signup'
+    | '/request-access/$shortCode'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/profile' | '/shorten' | '/signin' | '/signup'
-  id: '__root__' | '/' | '/profile' | '/shorten' | '/signin' | '/signup'
+  to:
+    | '/'
+    | '/access-denied'
+    | '/profile'
+    | '/shorten'
+    | '/signin'
+    | '/signup'
+    | '/request-access/$shortCode'
+  id:
+    | '__root__'
+    | '/'
+    | '/access-denied'
+    | '/profile'
+    | '/shorten'
+    | '/signin'
+    | '/signup'
+    | '/request-access/$shortCode'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccessDeniedRoute: typeof AccessDeniedRoute
   ProfileRoute: typeof ProfileRoute
   ShortenRoute: typeof ShortenRoute
   SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
+  RequestAccessShortCodeRoute: typeof RequestAccessShortCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -109,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/access-denied': {
+      id: '/access-denied'
+      path: '/access-denied'
+      fullPath: '/access-denied'
+      preLoaderRoute: typeof AccessDeniedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -116,15 +165,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/request-access/$shortCode': {
+      id: '/request-access/$shortCode'
+      path: '/request-access/$shortCode'
+      fullPath: '/request-access/$shortCode'
+      preLoaderRoute: typeof RequestAccessShortCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccessDeniedRoute: AccessDeniedRoute,
   ProfileRoute: ProfileRoute,
   ShortenRoute: ShortenRoute,
   SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
+  RequestAccessShortCodeRoute: RequestAccessShortCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -9,15 +9,21 @@ staticRoutes.get("/s/:shortCode", async (c) => {
     const shortCode = c.req.param("shortCode");
     const urlService = new UrlService(c.env.DB);
 
-    const originalUrl = await urlService.getOriginalUrl(shortCode);
+    const url = await urlService.getUrlByShortCode(shortCode);
 
-    if (!originalUrl) {
+    if (!url) {
       return c.text("URL not found", 404);
     }
+    if (!url.active) {
+      return c.text("URL Inactive", 403);
+    }
+    if (!url.isProtected) {
+      return c.redirect(url.originalUrl);
+    }
 
-    return c.redirect(originalUrl);
+    return c.redirect(`/request-access/${shortCode}`);
   } catch (err) {
-    console.log("Error redirecting URL:", err);
+    console.log("Error accessing URL:", err);
     return c.text("Internal Server Error", 500);
   }
 });
